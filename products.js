@@ -26,7 +26,6 @@ function saveToStorage() {
     localStorage.setItem('cadet_inventory', JSON.stringify(stationeryInventory));
 }
 
-let itemsShown = 6;
 let currentCategory = 'all';
 
 function renderProducts() {
@@ -35,9 +34,8 @@ function renderProducts() {
 
     grid.innerHTML = '';
     const filtered = stationeryInventory.filter(p => currentCategory === 'all' || p.category === currentCategory);
-    const visible = filtered.slice(0, itemsShown);
 
-    visible.forEach(p => {
+    filtered.forEach(p => {
         grid.innerHTML += `
             <div class="product-card" style="animation: fadeInUp 0.8s ease-out forwards;">
                 <img src="${p.img}" alt="${p.name}" class="product-img">
@@ -47,18 +45,10 @@ function renderProducts() {
             </div>
         `;
     });
-
-    const loadMoreBtn = document.getElementById('loadMoreContainer');
-    if (itemsShown < filtered.length) {
-        if(loadMoreBtn) loadMoreBtn.classList.remove('hidden');
-    } else {
-        if(loadMoreBtn) loadMoreBtn.classList.add('hidden');
-    }
 }
 
 function filterCategory(cat) {
     currentCategory = cat;
-    itemsShown = 6;
     
     document.querySelectorAll('.filter-tab').forEach(tab => {
         tab.classList.remove('active');
@@ -70,10 +60,7 @@ function filterCategory(cat) {
     renderProducts();
 }
 
-function loadMore() {
-    itemsShown += 6;
-    renderProducts();
-}
+
 
 function orderWhatsApp(productName) {
     const message = `Hello Cadet Stationery, I am interested in purchasing the ${productName}. Could you please provide more details?`;

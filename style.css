@@ -124,6 +124,18 @@ header {
     color: var(--accent-gold);
 }
 
+.menu-btn {
+    display: none;
+    color: var(--text-white);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.menu-btn:hover {
+    color: var(--accent-gold);
+}
+
 /* Hero Section */
 .hero {
     height: 100vh;
@@ -325,7 +337,36 @@ footer p {
 /* Big Mobile / Tablet Portrait (768px and below) */
 @media (max-width: 768px) {
     header { padding: 0 5%; height: 70px; }
-    .nav-menu { display: none; } /* Show in next step with hamburger if needed */
+    
+    .menu-btn { display: block; }
+
+    .nav-menu { 
+        position: fixed;
+        top: 70px;
+        right: -100%;
+        width: 100%;
+        height: calc(100vh - 70px);
+        background: rgba(2, 6, 12, 0.98);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition-slow);
+        z-index: 999;
+    }
+
+    .nav-menu.active {
+        right: 0;
+    }
+
+    .nav-menu li {
+        margin: 25px 0;
+    }
+
+    .nav-menu a {
+        font-size: 1.2rem;
+    }
+
     .hero-content h1 { font-size: 2.8rem; }
     .hero-content p { font-size: 0.9rem; }
     .btn-premium { padding: 15px 30px; font-size: 0.8rem; }

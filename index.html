@@ -27,12 +27,16 @@
     <header>
         <a href="index.html" class="logo">CADET <span>STATIONERY</span></a>
 
-        <ul class="nav-menu">
+        <ul class="nav-menu" id="navMenu">
             <li><a href="index.html" class="active">Home</a></li>
             <li><a href="#products">Collection</a></li>
             <li><a href="about.html">Our Story</a></li>
             <li><a href="contact.html">Contact</a></li>
         </ul>
+
+        <div class="menu-btn" id="menuBtn">
+            <i class="fas fa-bars"></i>
+        </div>
     </header>
 
     <!-- Hero Section -->
@@ -62,9 +66,6 @@
             <!-- Dynamic Content Loaded from products.js -->
         </div>
 
-        <div id="loadMoreContainer" style="text-align: center; margin-top: 80px;">
-            <button class="btn-premium" onclick="loadMore()">Discover More</button>
-        </div>
     </div>
 
     <!-- WhatsApp Floating Button -->
@@ -78,6 +79,29 @@
     </footer>
 
     <script src="products.js"></script>
+    <script>
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('menuBtn');
+        const navMenu = document.getElementById('navMenu');
+
+        menuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            const icon = menuBtn.querySelector('i');
+            if (navMenu.classList.contains('active')) {
+                icon.classList.replace('fa-bars', 'fa-times');
+            } else {
+                icon.classList.replace('fa-times', 'fa-bars');
+            }
+        });
+
+        // Close menu when link is clicked
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                menuBtn.querySelector('i').classList.replace('fa-times', 'fa-bars');
+            });
+        });
+    </script>
 </body>
 
 </html>

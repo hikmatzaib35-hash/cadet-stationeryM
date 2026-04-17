@@ -1,6 +1,6 @@
 const ADMIN_CREDENTIALS = {
     username: "admin",
-    password: "123"
+    password: "admin123"
 };
 
 // Initial Sync from LocalStorage
