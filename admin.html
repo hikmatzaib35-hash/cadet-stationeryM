@@ -207,6 +207,9 @@
                     <label>Story Image</label>
                     <input type="file" id="cms_story_file" accept="image/*" onchange="previewCmsImage(this)" style="margin-bottom: 10px;">
                     <input type="text" id="cms_story_img" placeholder="Image URL">
+                    <div id="cmsImgPreview" style="margin-top: 10px; display: none;">
+                        <img id="cmsPreviewTag" src="" style="height: 100px; border: 1px solid var(--accent-gold);">
+                    </div>
                 </div>
                 <button class="btn-premium" style="width: 100%; margin-top: 10px;" onclick="saveCmsData()">Update Website Content</button>
             </div>

@@ -86,6 +86,8 @@ function previewCmsImage(input) {
         const reader = new FileReader();
         reader.onload = function(e) {
             currentCmsBase64 = e.target.result;
+            document.getElementById('cmsImgPreview').style.display = 'block';
+            document.getElementById('cmsPreviewTag').src = currentCmsBase64;
             document.getElementById('cms_story_img').value = "New Image ready";
         }
         reader.readAsDataURL(input.files[0]);
@@ -165,6 +167,11 @@ function loadCmsFields() {
     document.getElementById('cms_story_quote').value = cmsData.storyQuote;
     document.getElementById('cms_story_text').value = cmsData.storyText;
     document.getElementById('cms_story_img').value = cmsData.storyImg;
+    
+    if (cmsData.storyImg) {
+        document.getElementById('cmsImgPreview').style.display = 'block';
+        document.getElementById('cmsPreviewTag').src = cmsData.storyImg;
+    }
 }
 
 function saveCmsData() {
