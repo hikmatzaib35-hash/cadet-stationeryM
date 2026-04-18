@@ -1,0 +1,116 @@
+/* 
+   Mudasir Theme: Ivory & Forest 
+   Premium Natural Stationery Aesthetic
+*/
+
+:root {
+    --primary-forest: #1a3c34;
+    --accent-gold: #c5a059;
+    --forest-glow: rgba(26, 60, 52, 0.15);
+    --gold-bloom: 0 15px 35px rgba(26, 60, 52, 0.2);
+    --ivory-bg: #fdfcf0;
+    --text-dark: #1a3c34;
+    --text-white: #ffffff;
+    --bg-main: #fdfcf0;
+    --card-bg: #ffffff;
+    --glass-border: rgba(26, 60, 52, 0.1);
+    --transition-slow: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-fast: all 0.3s ease;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    line-height: 1.7;
+    overflow-x: hidden;
+}
+
+header {
+    height: 90px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 8%;
+    background: rgba(253, 252, 240, 0.95);
+    backdrop-filter: blur(15px);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.logo {
+    font-size: 1.6rem;
+    color: var(--text-dark);
+    text-decoration: none;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.logo span {
+    color: var(--primary-forest);
+    font-weight: 700;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.hero {
+    height: 100vh;
+    background: linear-gradient(rgba(253, 252, 240, 0.6), rgba(253, 252, 240, 0.4)), url('hero-bg.png');
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero-content h1 {
+    font-size: 5rem;
+    color: var(--primary-forest);
+    font-style: italic;
+}
+
+.btn-premium {
+    padding: 18px 50px;
+    background: var(--primary-forest);
+    color: var(--text-white);
+    box-shadow: 0 10px 20px rgba(26, 60, 52, 0.2);
+}
+
+.product-card {
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    padding: 30px;
+    text-align: center;
+    transition: var(--transition-slow);
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(26, 60, 52, 0.08);
+}
+
+.buy-btn {
+    width: 100%;
+    padding: 15px;
+    background: transparent;
+    color: var(--primary-forest);
+    border: 1px solid var(--primary-forest);
+}
+
+.buy-btn:hover {
+    background: var(--primary-forest);
+    color: var(--text-white);
+}
+
+footer {
+    padding: 80px 8%;
+    background: #f4f3e6;
+    text-align: center;
+}
