@@ -19,7 +19,7 @@
             flex: 1;
             height: 650px;
             background: url('https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=800') center/cover;
-            border: 1px solid var(--accent-champagne);
+            border: 1px solid var(--accent-gold);
             padding: 10px;
             position: relative;
         }
@@ -28,7 +28,7 @@
             position: absolute;
             top: -15px; right: -15px;
             width: 100%; height: 100%;
-            border: 1px solid var(--accent-champagne);
+            border: 1px solid var(--accent-gold);
             z-index: -1;
         }
         .heritage-content {
@@ -37,7 +37,7 @@
         .gold-divider {
             width: 60px;
             height: 1px;
-            background: var(--accent-champagne);
+            background: var(--accent-gold);
             margin: 40px 0;
         }
         .quote {
@@ -49,21 +49,43 @@
             line-height: 1.3;
         }
 
+        /* Profile DP styling for Mobile */
+        .profile-dp-container {
+            display: none;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-gold);
+            padding: 8px;
+            background: var(--bg-dark);
+            box-shadow: 0 0 30px var(--gold-glow);
+        }
+        .profile-dp {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Philosophy Background Style */
+        .philosophy-wrap {
+            position: relative;
+            padding: 150px 0;
+            background: linear-gradient(rgba(10, 10, 15, 0.9), rgba(10, 10, 15, 0.9)), url('hero-bg.png') center/cover fixed;
+            margin: 0 -10%;
+            color: white;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
-            .heritage-section { 
-                flex-direction: column; 
-                gap: 60px; 
-                text-align: center; 
-            }
-            .heritage-image { 
-                height: 500px;
-                width: 100%; 
-                order: -1; 
-            }
-            .heritage-image::after { display: none; }
+            .heritage-section { flex-direction: column; gap: 60px; text-align: center; }
+            .heritage-image { display: none; } /* Hide the big strip on mobile */
+            .profile-dp-container { display: block; } /* Show DP on mobile */
             .heritage-content h1 { font-size: 3rem !important; }
             .quote { font-size: 1.6rem; }
             .gold-divider { margin: 30px auto; }
+            .philosophy-wrap { padding: 100px 5%; margin: 0; }
         }
     </style>
 </head>
@@ -84,7 +106,12 @@
     <section class="section-container" style="margin-top: 150px;">
         <div class="heritage-section">
             <div class="heritage-content">
-                <p style="text-transform: uppercase; letter-spacing: 6px; color: var(--accent-champagne); margin-bottom: 25px; font-size: 0.8rem;">EST. 2026</p>
+                <!-- Mobile DP -->
+                <div class="profile-dp-container">
+                    <img id="dynDp" class="profile-dp" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200" alt="DP">
+                </div>
+
+                <p style="text-transform: uppercase; letter-spacing: 6px; color: var(--accent-gold); margin-bottom: 25px; font-size: 0.8rem;">EST. 2026</p>
                 <h1 id="dynTitle" style="font-size: 4.5rem; line-height: 1.1; color: var(--text-white);">The Art of <br>Fine Writing</h1>
                 <div class="gold-divider"></div>
                 <p id="dynText" style="font-weight: 300; font-size: 1.15rem; color: var(--text-champagne); line-height: 1.9; opacity: 0.9;">
@@ -95,11 +122,13 @@
             <div id="dynImg" class="heritage-image"></div>
         </div>
 
-        <div style="text-align: center; max-width: 900px; margin: 0 auto; padding-bottom: 120px;">
-            <h2 style="font-size: 3rem; margin-bottom: 40px; color: var(--text-white); font-style: italic;">Our Philosophy</h2>
-            <p style="font-weight: 300; font-size: 1.15rem; color: var(--text-champagne); line-height: 2; opacity: 0.8;">
-                We curate our collections with an uncompromising eye for quality. From the weight of the nib to the grain of the leather, every detail is scrutinised. Our mission is to provide the modern professional with an analogue escape in a digital world.
-            </p>
+        <div class="philosophy-wrap">
+            <div style="max-width: 900px; margin: 0 auto; padding: 0 20px;">
+                <h2 id="philTitle" style="font-size: 3.5rem; margin-bottom: 40px; color: var(--accent-gold); font-style: italic;">Our Philosophy</h2>
+                <p id="philText" style="font-weight: 300; font-size: 1.4rem; color: var(--text-white); line-height: 2; opacity: 0.95; direction: rtl;">
+                    ہم اپنے کلیکشنز کا انتخاب معیار پر سمجھوتہ کیے بغیر کرتے ہیں۔ نب کے وزن سے لے کر چمڑے کے دانے تک، ہر تفصیل کی باریک بینی سے جانچ کی جاتی ہے۔ ہمارا مقصد جدید پیشہ ور افراد کو ڈیجیٹل دنیا میں ایک اینالاگ فرار فراہم کرنا ہے۔
+                </p>
+            </div>
         </div>
     </section>
 
@@ -115,6 +144,39 @@
             if (cmsData.storyText) document.getElementById('dynText').innerText = cmsData.storyText;
             if (cmsData.storyQuote) document.getElementById('dynQuote').innerText = `"${cmsData.storyQuote}"`;
             if (cmsData.storyImg) document.getElementById('dynImg').style.backgroundImage = `url('${cmsData.storyImg}')`;
+            
+            // New CMS Fields
+            if (cmsData.dpImg) document.getElementById('dynDp').src = cmsData.dpImg;
+            if (cmsData.philTitle) document.getElementById('philTitle').innerText = cmsData.philTitle;
+            if (cmsData.philText) {
+                document.getElementById('philText').innerText = cmsData.philText;
+                // Auto-detect Urdu to set RTL
+                if (containsUrdu(cmsData.philText)) {
+                    document.getElementById('philText').style.direction = 'rtl';
+                } else {
+                    document.getElementById('philText').style.direction = 'ltr';
+                }
+            }
+        }
+
+        function containsUrdu(text) {
+            const urduPattern = /[\u0600-\u06FF]/;
+            return urduPattern.test(text);
+        }
+
+        const menuBtn = document.getElementById('menuBtn');
+        const navMenu = document.getElementById('navMenu');
+
+        if (menuBtn && navMenu) {
+            menuBtn.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                const icon = menuBtn.querySelector('i');
+                if (navMenu.classList.contains('active')) {
+                    icon.classList.replace('fa-bars', 'fa-times');
+                } else {
+                    icon.classList.replace('fa-times', 'fa-bars');
+                }
+            });
         }
     </script>
 </body>
