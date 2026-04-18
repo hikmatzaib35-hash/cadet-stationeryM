@@ -6,14 +6,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
 
 :root {
-    --primary-navy: #050d1a;
-    --accent-gold: #d4af37;
-    --gold-glow: rgba(212, 175, 55, 0.4);
-    --text-cream: #f4ece1;
+    --primary-navy: #040a15;
+    --accent-gold: #e5c05b;
+    --gold-glow: rgba(229, 192, 91, 0.45);
+    --gold-bloom: 0 0 25px rgba(229, 192, 91, 0.3);
+    --text-cream: #f9f5f0;
     --text-white: #ffffff;
-    --bg-dark: #02060c;
-    --card-bg: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(212, 175, 55, 0.15);
+    --bg-dark: #01040a;
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --glass-border: rgba(229, 192, 91, 0.2);
     --transition-slow: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     --transition-fast: all 0.3s ease;
 }
@@ -386,6 +387,12 @@ footer p {
     justify-content: space-between;
 }
 
+.product-card:hover {
+    transform: translateY(-20px);
+    border-color: var(--accent-gold);
+    box-shadow: var(--gold-bloom);
+}
+
 /* Responsive Design System Refinement */
 
 @media (max-width: 1200px) {
@@ -432,19 +439,26 @@ footer p {
         grid-template-columns: repeat(2, 1fr) !important; 
         gap: 15px !important; 
     }
-    .hero-content h1 { font-size: 2.5rem; }
+    .hero-content h1 { font-size: 2.2rem; }
+    .hero-content p { font-size: 0.8rem; }
+    .btn-premium { 
+        padding: 12px 25px !important; 
+        font-size: 0.7rem !important; 
+        width: auto !important;
+        margin: 0 auto;
+    }
     .section-container { padding: 40px 4% !important; }
-    .product-img-container { height: 180px; }
-    .product-card { padding: 15px; }
-    .product-name { font-size: 1rem; margin-bottom: 5px; height: 2.8em; overflow: hidden; }
-    .product-price { font-size: 0.85rem; margin-bottom: 10px; }
-    .buy-btn { padding: 8px; font-size: 0.65rem; }
+    .product-img-container { height: 160px; }
+    .product-card { padding: 12px; }
+    .product-name { font-size: 0.9rem; margin-bottom: 5px; height: 2.8em; overflow: hidden; }
+    .product-price { font-size: 0.8rem; margin-bottom: 10px; }
+    .buy-btn { padding: 8px; font-size: 0.6rem; }
 }
 
 @media (max-width: 400px) {
     .product-grid { gap: 10px !important; }
-    .product-img-container { height: 150px; }
-    .product-name { font-size: 0.85rem; }
+    .product-img-container { height: 140px; }
+    .product-name { font-size: 0.8rem; }
 }
 
 /* Tablet/Mobile Fixes for Heritage & Contact */

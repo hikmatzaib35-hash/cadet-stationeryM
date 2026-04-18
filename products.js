@@ -125,7 +125,7 @@ function renderProducts() {
                 </div>
                 <h3 class="product-name">${p.name}</h3>
                 <p class="product-price">${p.price}</p>
-                <button class="buy-btn" onclick="orderWhatsApp('${p.name}')">Inquire via WhatsApp</button>
+                <button class="buy-btn" onclick="orderWhatsApp('${p.name}')">Order Now</button>
             </div>
         `;
     });
@@ -146,7 +146,7 @@ function filterCategory(cat) {
 }
 
 function orderWhatsApp(productName) {
-    const message = `Hello Cadet Stationery, I am interested in purchasing the ${productName}. Could you please provide more details?`;
+    const message = `Assalam-o-Alaikum Cadet Stationery, mujhe ye "${productName}" order karna hai. Baraye meherbani is ki tafseelat aur delivery ka tareeqa bata dein. Shukriya!`;
     const phone = "923347124766"; 
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
