@@ -108,6 +108,18 @@ function saveToStorage() {
     localStorage.setItem('cadet_inventory', JSON.stringify(stationeryInventory));
 }
 
+// Fetch from Firebase if configured
+if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+    firebase.database().ref('inventory').on('value', snapshot => {
+        if (snapshot.exists()) {
+            stationeryInventory = snapshot.val();
+            localStorage.setItem('cadet_inventory', JSON.stringify(stationeryInventory));
+            renderProducts();
+        }
+    });
+}
+
+
 let currentCategory = 'all';
 
 function renderProducts() {

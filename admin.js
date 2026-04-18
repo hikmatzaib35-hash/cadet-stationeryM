@@ -8,16 +8,52 @@ let currentBase64 = "";
 let currentCmsBase64 = "";
 let currentDpBase64 = "";
 
+// Helper to compress images to ensure they fit in LocalStorage
+function compressImage(file, maxWidth, maxHeight, quality, callback) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+                if (width > maxWidth) {
+                    height *= maxWidth / width;
+                    width = maxWidth;
+                }
+            } else {
+                if (height > maxHeight) {
+                    width *= maxHeight / height;
+                    height = maxHeight;
+                }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Export as JPEG with compression
+            const result = canvas.toDataURL('image/jpeg', quality);
+            callback(result);
+        };
+    };
+}
+
+
 // Initialize CMS data if not exists
 let cmsData = JSON.parse(localStorage.getItem('cadet_cms')) || {
     storyTitle: "The Art of Fine Writing",
     storyQuote: "A pen is more than a tool; it is an extension of the soul.",
     storyText: "At Cadet Stationery, we believe that the tools you use define the legacy you leave. What began as a passion for the tactile beauty of ink on paper has evolved into a sanctuary for the world's finest writing instruments and handcrafted journals.",
     storyImg: "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=800",
-    dpImg: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200",
-    philTitle: "ہمارا نظریہ",
-    philText: "ہم اپنے کلیکشنز کا انتخاب معیار پر سمجھوتہ کیے بغیر کرتے ہیں۔ نب کے وزن سے لے کر چمڑے کے دانے تک، ہر تفصیل کی باریک بینی سے جانچ کی جاتی ہے۔ ہمارا مقصد جدید پیشہ ور افراد کو ڈیجیٹل دنیا میں ایک اینالاگ فرار فراہم کرنا ہے۔"
+    dpImg: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200"
 };
+
 
 if (localStorage.getItem('cadet_admin_auth') === 'true') {
     showDashboard();
@@ -39,9 +75,31 @@ function showDashboard() {
     document.getElementById('loginArea').classList.add('hidden');
     document.getElementById('dashboardArea').style.display = 'block';
     document.getElementById('logoutBtn').classList.remove('hidden');
+    
+    // Attempt to sync from Firebase on load
+    if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+        firebase.database().ref('inventory').once('value', snapshot => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                localStorage.setItem('cadet_inventory', JSON.stringify(data));
+                products = data;
+                renderAdminProducts();
+            }
+        });
+        firebase.database().ref('cms').once('value', snapshot => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                localStorage.setItem('cadet_cms', JSON.stringify(data));
+                cmsData = data;
+                loadCmsFields();
+            }
+        });
+    }
+
     renderAdminProducts();
     loadCmsFields();
 }
+
 
 function adminLogout() {
     localStorage.removeItem('cadet_admin_auth');
@@ -74,40 +132,37 @@ function renderAdminProducts() {
 
 function previewImage(input) {
     if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            currentBase64 = e.target.result;
+        compressImage(input.files[0], 800, 800, 0.7, (base64) => {
+            currentBase64 = base64;
             document.getElementById('imgPreview').style.display = 'block';
             document.getElementById('previewTag').src = currentBase64;
-            document.getElementById('p_img').value = "Image uploaded";
-        }
-        reader.readAsDataURL(input.files[0]);
+            document.getElementById('p_img').value = "Image optimized & ready";
+        });
     }
 }
 
 function previewCmsImage(input) {
     if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            currentCmsBase64 = e.target.result;
+        compressImage(input.files[0], 1200, 800, 0.6, (base64) => {
+            currentCmsBase64 = base64;
             document.getElementById('cmsImgPreview').style.display = 'block';
             document.getElementById('cmsPreviewTag').src = currentCmsBase64;
-            document.getElementById('cms_story_img').value = "Header Image updated";
-        }
-        reader.readAsDataURL(input.files[0]);
+            document.getElementById('cms_story_img').value = "Header Image optimized";
+        });
     }
 }
 
 function previewDpImage(input) {
     if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            currentDpBase64 = e.target.result;
-            document.getElementById('cms_dp_img').value = "DP Selected";
-        }
-        reader.readAsDataURL(input.files[0]);
+        compressImage(input.files[0], 400, 400, 0.8, (base64) => {
+            currentDpBase64 = base64;
+            document.getElementById('cmsDpPreview').style.display = 'block';
+            document.getElementById('dpPreviewTag').src = currentDpBase64;
+            document.getElementById('cms_dp_img').value = "DP Selected & optimized";
+        });
     }
 }
+
 
 // --- Inventory Form Logic ---
 
@@ -150,10 +205,23 @@ function saveProductEntry() {
     if (index === -1) products.unshift(item);
     else products[index] = item;
 
-    localStorage.setItem('cadet_inventory', JSON.stringify(products));
-    renderAdminProducts();
-    closeProductForm();
+    try {
+        localStorage.setItem('cadet_inventory', JSON.stringify(products));
+        
+        // Sync to Firebase if configured
+        if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+            firebase.database().ref('inventory').set(products);
+        }
+
+        renderAdminProducts();
+        closeProductForm();
+        currentBase64 = ""; // Clear after save
+    } catch (e) {
+
+        alert("Storage Full! Cannot save such large images. Try a smaller file or clear some items.");
+    }
 }
+
 
 function editProduct(index) {
     const p = products[index];
@@ -183,31 +251,54 @@ function loadCmsFields() {
     document.getElementById('cms_story_text').value = cmsData.storyText;
     document.getElementById('cms_story_img').value = cmsData.storyImg;
     document.getElementById('cms_dp_img').value = cmsData.dpImg || "";
-    document.getElementById('cms_phil_title').value = cmsData.philTitle || "ہمارا نظریہ";
-    document.getElementById('cms_phil_text').value = cmsData.philText || "";
+
 
     if (cmsData.storyImg) {
         document.getElementById('cmsImgPreview').style.display = 'block';
         document.getElementById('cmsPreviewTag').src = cmsData.storyImg;
     }
+    if (cmsData.dpImg) {
+        document.getElementById('cmsDpPreview').style.display = 'block';
+        document.getElementById('dpPreviewTag').src = cmsData.dpImg;
+    }
 }
+
 
 function saveCmsData() {
     cmsData.storyTitle = document.getElementById('cms_story_title').value;
     cmsData.storyQuote = document.getElementById('cms_story_quote').value;
     cmsData.storyText = document.getElementById('cms_story_text').value;
-    cmsData.philTitle = document.getElementById('cms_phil_title').value;
-    cmsData.philText = document.getElementById('cms_phil_text').value;
+
     
-    if (currentCmsBase64) cmsData.storyImg = currentCmsBase64;
-    else cmsData.storyImg = document.getElementById('cms_story_img').value;
+    if (currentCmsBase64) {
+        cmsData.storyImg = currentCmsBase64;
+        currentCmsBase64 = ""; 
+    } else {
+        cmsData.storyImg = document.getElementById('cms_story_img').value;
+    }
 
-    if (currentDpBase64) cmsData.dpImg = currentDpBase64;
-    else cmsData.dpImg = document.getElementById('cms_dp_img').value;
+    if (currentDpBase64) {
+        cmsData.dpImg = currentDpBase64;
+        currentDpBase64 = "";
+    } else {
+        cmsData.dpImg = document.getElementById('cms_dp_img').value;
+    }
 
-    localStorage.setItem('cadet_cms', JSON.stringify(cmsData));
-    alert('Website content updated globally!');
+    try {
+        localStorage.setItem('cadet_cms', JSON.stringify(cmsData));
+
+        // Sync to Firebase if configured
+        if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+            firebase.database().ref('cms').set(cmsData);
+        }
+
+        alert('Website content updated globally!');
+    } catch (e) {
+
+        alert("Storage Full! Could not update. Please use smaller images.");
+    }
 }
+
 
 function resetInventory() {
     if(confirm('Reset all settings to default?')) {

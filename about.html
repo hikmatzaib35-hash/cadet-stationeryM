@@ -8,6 +8,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="firebase-init.js"></script>
+
     <style>
         .heritage-section {
             display: flex;
@@ -68,16 +74,6 @@
             object-fit: cover;
         }
 
-        /* Philosophy Background Style */
-        .philosophy-wrap {
-            position: relative;
-            padding: 150px 0;
-            background: linear-gradient(rgba(10, 10, 15, 0.9), rgba(10, 10, 15, 0.9)), url('hero-bg.png') center/cover fixed;
-            margin: 0 -10%;
-            color: white;
-            text-align: center;
-        }
-
         @media (max-width: 768px) {
             .heritage-section { flex-direction: column; gap: 60px; text-align: center; }
             .heritage-image { display: none; } /* Hide the big strip on mobile */
@@ -85,8 +81,8 @@
             .heritage-content h1 { font-size: 3rem !important; }
             .quote { font-size: 1.6rem; }
             .gold-divider { margin: 30px auto; }
-            .philosophy-wrap { padding: 100px 5%; margin: 0; }
         }
+
     </style>
 </head>
 
@@ -122,42 +118,40 @@
             <div id="dynImg" class="heritage-image"></div>
         </div>
 
-        <div class="philosophy-wrap">
-            <div style="max-width: 900px; margin: 0 auto; padding: 0 20px;">
-                <h2 id="philTitle" style="font-size: 3.5rem; margin-bottom: 40px; color: var(--accent-gold); font-style: italic;">Our Philosophy</h2>
-                <p id="philText" style="font-weight: 300; font-size: 1.4rem; color: var(--text-white); line-height: 2; opacity: 0.95; direction: rtl;">
-                    ہم اپنے کلیکشنز کا انتخاب معیار پر سمجھوتہ کیے بغیر کرتے ہیں۔ نب کے وزن سے لے کر چمڑے کے دانے تک، ہر تفصیل کی باریک بینی سے جانچ کی جاتی ہے۔ ہمارا مقصد جدید پیشہ ور افراد کو ڈیجیٹل دنیا میں ایک اینالاگ فرار فراہم کرنا ہے۔
-                </p>
-            </div>
-        </div>
+
     </section>
 
     <footer>
-        <p>&copy; 2026 Cadet Stationery Store. Crafted for excellence.</p>
+        <p>&copy; 2026 Cadet Stationery Store. Crafted for excellence. <br><span style="color: var(--accent-gold); font-size: 0.8rem; letter-spacing: 2px;">DEVELOPER MUDASIR</span></p>
     </footer>
+
 
     <script>
         // Load Dynamic CMS Data
-        const cmsData = JSON.parse(localStorage.getItem('cadet_cms'));
-        if (cmsData) {
-            if (cmsData.storyTitle) document.getElementById('dynTitle').innerText = cmsData.storyTitle;
-            if (cmsData.storyText) document.getElementById('dynText').innerText = cmsData.storyText;
-            if (cmsData.storyQuote) document.getElementById('dynQuote').innerText = `"${cmsData.storyQuote}"`;
-            if (cmsData.storyImg) document.getElementById('dynImg').style.backgroundImage = `url('${cmsData.storyImg}')`;
-            
-            // New CMS Fields
-            if (cmsData.dpImg) document.getElementById('dynDp').src = cmsData.dpImg;
-            if (cmsData.philTitle) document.getElementById('philTitle').innerText = cmsData.philTitle;
-            if (cmsData.philText) {
-                document.getElementById('philText').innerText = cmsData.philText;
-                // Auto-detect Urdu to set RTL
-                if (containsUrdu(cmsData.philText)) {
-                    document.getElementById('philText').style.direction = 'rtl';
-                } else {
-                    document.getElementById('philText').style.direction = 'ltr';
-                }
-            }
+        function renderCms(data) {
+            if (data.storyTitle) document.getElementById('dynTitle').innerText = data.storyTitle;
+            if (data.storyText) document.getElementById('dynText').innerText = data.storyText;
+            if (data.storyQuote) document.getElementById('dynQuote').innerText = `"${data.storyQuote}"`;
+            if (data.storyImg) document.getElementById('dynImg').style.backgroundImage = `url('${data.storyImg}')`;
+            if (data.dpImg) document.getElementById('dynDp').src = data.dpImg;
         }
+
+        // Load Dynamic CMS Data from LocalStorage first
+        let cmsData = JSON.parse(localStorage.getItem('cadet_cms'));
+        if (cmsData) renderCms(cmsData);
+
+        // Fetch from Firebase if configured
+        if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+            firebase.database().ref('cms').on('value', snapshot => {
+                if (snapshot.exists()) {
+                    cmsData = snapshot.val();
+                    localStorage.setItem('cadet_cms', JSON.stringify(cmsData));
+                    renderCms(cmsData);
+                }
+            });
+        }
+
+
 
         function containsUrdu(text) {
             const urduPattern = /[\u0600-\u06FF]/;
