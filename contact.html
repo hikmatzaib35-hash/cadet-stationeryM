@@ -65,11 +65,14 @@
 <body>
     <header>
         <a href="index.html" class="logo">CADET <span>STATIONERY</span></a>
-        <ul class="nav-menu">
+        <ul class="nav-menu" id="navMenu">
             <li><a href="index.html">Home</a></li>
             <li><a href="about.html">Our Story</a></li>
             <li><a href="contact.html" class="active">Contact</a></li>
         </ul>
+        <div class="menu-btn" id="menuBtn">
+            <i class="fas fa-bars"></i>
+        </div>
     </header>
 
     <section class="section-container" style="margin-top: 100px;">
@@ -123,6 +126,30 @@
             e.preventDefault();
             alert('Your inquiry has been received by our concierge. We will contact you shortly.');
         });
+
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('menuBtn');
+        const navMenu = document.getElementById('navMenu');
+
+        if (menuBtn && navMenu) {
+            menuBtn.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+                const icon = menuBtn.querySelector('i');
+                if (navMenu.classList.contains('active')) {
+                    icon.classList.replace('fa-bars', 'fa-times');
+                } else {
+                    icon.classList.replace('fa-times', 'fa-bars');
+                }
+            });
+
+            // Close menu when link is clicked
+            document.querySelectorAll('.nav-menu a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                    menuBtn.querySelector('i').classList.replace('fa-times', 'fa-bars');
+                });
+            });
+        }
     </script>
 </body>
 

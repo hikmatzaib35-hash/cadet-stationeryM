@@ -123,7 +123,10 @@
         <div class="product-manager">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h3>Inventory Control</h3>
-                <button class="action-btn" onclick="openAddModal()">+ Add New Product</button>
+                <div>
+                    <button class="action-btn" onclick="resetInventory()" style="margin-right: 10px; border-color: #666; color: #999;">Reset to Default</button>
+                    <button class="action-btn" onclick="openAddModal()" style="border-color: var(--accent-gold); color: var(--accent-gold);">+ Add New Product</button>
+                </div>
             </div>
 
             <table class="product-table">
