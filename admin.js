@@ -3,10 +3,9 @@ const ADMIN_CREDENTIALS = {
     password: "admin123"
 };
 
-// Initial Sync from LocalStorage
 let products = JSON.parse(localStorage.getItem('cadet_inventory')) || [];
+let currentBase64 = "";
 
-// Check if already authenticated (simple session check)
 if (localStorage.getItem('cadet_admin_auth') === 'true') {
     showDashboard();
 }
@@ -19,7 +18,7 @@ function adminLogin() {
         localStorage.setItem('cadet_admin_auth', 'true');
         showDashboard();
     } else {
-        alert('Authentication failed. Check your security key.');
+        alert('Authentication failed.');
     }
 }
 
@@ -32,9 +31,7 @@ function showDashboard() {
 
 function adminLogout() {
     localStorage.removeItem('cadet_admin_auth');
-    document.getElementById('loginArea').classList.remove('hidden');
-    document.getElementById('dashboardArea').style.display = 'none';
-    document.getElementById('logoutBtn').classList.add('hidden');
+    location.reload();
 }
 
 function renderAdminProducts() {
@@ -42,18 +39,17 @@ function renderAdminProducts() {
     if (!root) return;
     
     root.innerHTML = '';
-    // Refresh local products array from storage to stay in sync
     products = JSON.parse(localStorage.getItem('cadet_inventory')) || [];
 
     products.forEach((p, index) => {
         root.innerHTML += `
             <tr>
-                <td><img src="${p.img}" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid var(--accent-gold); border-radius: 4px;"></td>
-                <td style="font-weight: 500;">${p.name}</td>
-                <td style="color: var(--accent-gold);">${p.price}</td>
+                <td><img src="${p.img}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+                <td>${p.name}</td>
+                <td>${p.price}</td>
                 <td>
-                    <button class="action-btn" onclick="editProduct(${index})"><i class="fas fa-edit"></i> Edit</button>
-                    <button class="action-btn" onclick="deleteProduct(${index})" style="border-color: #ff4d4d; color: #ff4d4d;"><i class="fas fa-trash"></i></button>
+                    <button class="action-btn" onclick="editProduct(${index})">Edit</button>
+                    <button class="action-btn" onclick="deleteProduct(${index})" style="color: #ff4d4d;">Trash</button>
                 </td>
             </tr>
         `;
@@ -61,50 +57,100 @@ function renderAdminProducts() {
     document.getElementById('totalProducts').innerText = products.length;
 }
 
-function saveChanges() {
+// --- Image Handling ---
+
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            currentBase64 = e.target.result;
+            document.getElementById('imgPreview').style.display = 'block';
+            document.getElementById('previewTag').src = currentBase64;
+            document.getElementById('p_img').value = "Image Selected from File System";
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// --- Form Logic ---
+
+function showAddForm() {
+    resetForm();
+    document.getElementById('productForm').classList.remove('hidden');
+    document.getElementById('formTitle').innerText = "Add New Masterpiece";
+    document.getElementById('editIndex').value = "-1";
+}
+
+function closeProductForm() {
+    document.getElementById('productForm').classList.add('hidden');
+}
+
+function resetForm() {
+    document.getElementById('p_name').value = "";
+    document.getElementById('p_price').value = "";
+    document.getElementById('p_img').value = "";
+    document.getElementById('p_file').value = "";
+    document.getElementById('imgPreview').style.display = 'none';
+    currentBase64 = "";
+}
+
+function saveProductEntry() {
+    const index = parseInt(document.getElementById('editIndex').value);
+    const name = document.getElementById('p_name').value;
+    const cat = document.getElementById('p_cat').value;
+    const price = document.getElementById('p_price').value;
+    let img = document.getElementById('p_img').value;
+
+    if (currentBase64) {
+        img = currentBase64;
+    }
+
+    if (!name || !price || !img) {
+        alert("Please fill all fields!");
+        return;
+    }
+
+    const newProduct = { id: Date.now(), category: cat, name, price, img };
+
+    if (index === -1) {
+        products.unshift(newProduct);
+    } else {
+        products[index] = { ...products[index], ...newProduct };
+    }
+
     localStorage.setItem('cadet_inventory', JSON.stringify(products));
-}
-
-function deleteProduct(index) {
-    if(confirm('Are you sure you want to remove this item?')) {
-        products.splice(index, 1);
-        saveChanges();
-        renderAdminProducts();
-    }
-}
-
-function openAddModal() {
-    const name = prompt('Product Name:');
-    const category = prompt('Category (writing, paper, tools, gifts):', 'writing');
-    const price = prompt('Price (e.g., Rs. 5,000):');
-    const img = prompt('Image URL (Unsplash link works best):');
-
-    if (name && price && img && category) {
-        products.unshift({ id: Date.now(), category, name, price, img });
-        saveChanges();
-        renderAdminProducts();
-        alert('New product added to the collection!');
-    }
+    renderAdminProducts();
+    closeProductForm();
+    alert("Collection updated!");
 }
 
 function editProduct(index) {
     const p = products[index];
-    const newName = prompt('New Name:', p.name);
-    const newPrice = prompt('New Price:', p.price);
-    const newImg = prompt('New Image URL:', p.img);
-    const newCat = prompt('New Category:', p.category);
+    document.getElementById('productForm').classList.remove('hidden');
+    document.getElementById('formTitle').innerText = "Edit " + p.name;
+    document.getElementById('editIndex').value = index;
+    
+    document.getElementById('p_name').value = p.name;
+    document.getElementById('p_cat').value = p.category;
+    document.getElementById('p_price').value = p.price;
+    document.getElementById('p_img').value = p.img;
+    
+    document.getElementById('imgPreview').style.display = 'block';
+    document.getElementById('previewTag').src = p.img;
+    currentBase64 = ""; // Reset since we are using existing
+}
 
-    if (newName && newPrice && newImg && newCat) {
-        products[index] = { ...p, name: newName, price: newPrice, img: newImg, category: newCat };
-        saveChanges();
+function deleteProduct(index) {
+    if(confirm('Delete this item?')) {
+        products.splice(index, 1);
+        localStorage.setItem('cadet_inventory', JSON.stringify(products));
         renderAdminProducts();
-        alert('Product updated successfully!');
     }
 }
 
 function resetInventory() {
-    if(confirm('This will reset the store to the default 85+ products. All custom changes will be lost. Proceed?')) {
+    if(confirm('Reset to default items?')) {
         localStorage.removeItem('cadet_inventory');
-        location.reload(); // products.js will handle the re-initialization
+        location.reload();
     }
 }

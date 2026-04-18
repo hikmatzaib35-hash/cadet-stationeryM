@@ -428,19 +428,23 @@ footer p {
 }
 
 @media (max-width: 600px) {
-    .product-grid { grid-template-columns: 1fr; } /* Single column for better focus */
-    .hero-content h1 { font-size: 2.8rem; }
-    .section-container { padding: 60px 5% !important; }
-    .product-img-container { height: 350px; }
+    .product-grid { 
+        grid-template-columns: repeat(2, 1fr) !important; 
+        gap: 15px !important; 
+    }
+    .hero-content h1 { font-size: 2.5rem; }
+    .section-container { padding: 40px 4% !important; }
+    .product-img-container { height: 180px; }
+    .product-card { padding: 15px; }
+    .product-name { font-size: 1rem; margin-bottom: 5px; height: 2.8em; overflow: hidden; }
+    .product-price { font-size: 0.85rem; margin-bottom: 10px; }
+    .buy-btn { padding: 8px; font-size: 0.65rem; }
 }
 
-@media (max-width: 480px) {
-    .hero-content h1 { font-size: 2.5rem; }
-    .hero-content p { font-size: 0.85rem; }
-    .btn-premium { width: 100%; text-align: center; padding: 15px; }
-    .product-card { padding: 20px; }
-    .product-img-container { height: 300px; }
-    .product-name { font-size: 1.4rem; }
+@media (max-width: 400px) {
+    .product-grid { gap: 10px !important; }
+    .product-img-container { height: 150px; }
+    .product-name { font-size: 0.85rem; }
 }
 
 /* Tablet/Mobile Fixes for Heritage & Contact */
