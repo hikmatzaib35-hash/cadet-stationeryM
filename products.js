@@ -147,7 +147,7 @@ function filterCategory(cat) {
 
 function orderWhatsApp(productName) {
     const message = `Hello Cadet Stationery, I am interested in purchasing the ${productName}. Could you please provide more details?`;
-    const phone = "923000000000"; 
+    const phone = "923347124766"; 
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
 }

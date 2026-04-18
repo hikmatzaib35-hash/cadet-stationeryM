@@ -13,7 +13,7 @@
             display: flex;
             align-items: center;
             gap: 100px;
-            margin-bottom: 150px;
+            margin-bottom: 100px;
         }
         .heritage-image {
             flex: 1;
@@ -45,8 +45,17 @@
             font-family: 'Playfair Display', serif;
             font-style: italic;
             color: var(--accent-gold);
-            margin: 50px 0;
+            margin: 40px 0;
             line-height: 1.4;
+        }
+
+        /* Mobile Adjustments for CMS-Ready Page */
+        @media (max-width: 768px) {
+            .heritage-section { flex-direction: column; gap: 40px; text-align: center; }
+            .heritage-image { height: 350px; width: 100%; order: -1; }
+            .heritage-image::after { display: none; }
+            .heritage-content h1 { font-size: 2.5rem !important; }
+            .quote { font-size: 1.5rem; }
         }
     </style>
 </head>
@@ -68,31 +77,38 @@
         <div class="heritage-section">
             <div class="heritage-content">
                 <p style="text-transform: uppercase; letter-spacing: 5px; color: var(--accent-gold); margin-bottom: 20px;">EST. 2026</p>
-                <h1 style="font-size: 4rem; line-height: 1;">The Art of <br>Fine Writing</h1>
+                <h1 id="dynTitle" style="font-size: 4rem; line-height: 1;">The Art of <br>Fine Writing</h1>
                 <div class="gold-divider"></div>
-                <p style="font-weight: 300; font-size: 1.1rem; color: var(--text-cream);">
-                    At Cadet Stationery, we believe that the tools you use define the legacy you leave. What began as a passion for the tactile beauty of ink on paper has evolved into a sanctuary for the world's finest writing instruments and handcrafted journals.
+                <p id="dynText" style="font-weight: 300; font-size: 1.1rem; color: var(--text-cream); line-height: 1.8;">
+                    <!-- Dynamic Content -->
                 </p>
-                <p class="quote">"A pen is more than a tool; it is an extension of the soul."</p>
+                <p id="dynQuote" class="quote">"A pen is more than a tool; it is an extension of the soul."</p>
             </div>
-            <div class="heritage-image"></div>
+            <div id="dynImg" class="heritage-image"></div>
         </div>
 
-        <div style="text-align: center; max-width: 800px; margin: 0 auto;">
-            <h2 style="font-size: 3rem; margin-bottom: 40px;">Our Philosophy</h2>
-            <p style="font-weight: 300; font-size: 1.2rem; color: var(--text-cream); line-height: 2;">
+        <div style="text-align: center; max-width: 800px; margin: 0 auto; padding-bottom: 80px;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 30px;">Our Philosophy</h2>
+            <p style="font-weight: 300; font-size: 1.1rem; color: var(--text-cream); line-height: 1.8;">
                 We curate our collections with an uncompromising eye for quality. From the weight of the nib to the grain of the leather, every detail is scrutinised. Our mission is to provide the modern professional with an analogue escape in a digital world.
             </p>
         </div>
     </section>
-
-    </footer>
 
     <footer>
         <p>&copy; 2026 Cadet Stationery Store. Crafted for excellence.</p>
     </footer>
 
     <script>
+        // Load Dynamic CMS Data
+        const cmsData = JSON.parse(localStorage.getItem('cadet_cms'));
+        if (cmsData) {
+            if (cmsData.storyTitle) document.getElementById('dynTitle').innerText = cmsData.storyTitle;
+            if (cmsData.storyText) document.getElementById('dynText').innerText = cmsData.storyText;
+            if (cmsData.storyQuote) document.getElementById('dynQuote').innerText = `"${cmsData.storyQuote}"`;
+            if (cmsData.storyImg) document.getElementById('dynImg').style.backgroundImage = `url('${cmsData.storyImg}')`;
+        }
+
         // Mobile Menu Toggle
         const menuBtn = document.getElementById('menuBtn');
         const navMenu = document.getElementById('navMenu');
@@ -107,8 +123,6 @@
                     icon.classList.replace('fa-times', 'fa-bars');
                 }
             });
-
-            // Close menu when link is clicked
             document.querySelectorAll('.nav-menu a').forEach(link => {
                 link.addEventListener('click', () => {
                     navMenu.classList.remove('active');
