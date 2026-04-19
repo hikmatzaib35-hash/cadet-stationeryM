@@ -77,6 +77,7 @@ function showDashboard() {
                 renderAdminProducts();
             }
         });
+    }
     renderAdminProducts();
 }
 
@@ -118,9 +119,6 @@ function previewImage(input) {
             document.getElementById('previewTag').src = currentBase64;
             document.getElementById('p_img').value = "Product Image Optimized"; 
         });
-    }
-}
-
     }
 }
 
