@@ -24,6 +24,11 @@
 </head>
 
 <body>
+    <!-- Preloader -->
+    <div id="preloader" style="position: fixed; top:0; left:0; width:100%; height:100%; background: #0a0a0f; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease;">
+        <div style="width: 40px; height: 40px; border: 2px solid var(--accent-gold); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+    </div>
+
 
     <!-- Header -->
     <header>
@@ -42,13 +47,15 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero" id="hero">
+        <div class="hero-overlay" id="heroOverlay"></div>
         <div class="hero-content">
-            <h1>Elevate Your Work</h1>
-            <p>Premium office supplies, luxury writing instruments, and handcrafted journals designed for the modern professional.</p>
-            <a href="#products" class="btn-premium">Explore Collection</a>
+            <h1 style="animation: fadeInUp 1s ease forwards;">Elevate Your Work</h1>
+            <p style="animation: fadeInUp 1.2s ease forwards;">Premium office supplies, luxury writing instruments, and handcrafted journals designed for the modern professional.</p>
+            <a href="#products" class="btn-premium" style="animation: fadeInUp 1.4s ease forwards;">Explore Collection</a>
         </div>
     </section>
+
 
     <!-- Category Filters -->
     <div class="section-container" style="padding-bottom: 0;">
@@ -83,9 +90,39 @@
 
     <script src="products.js"></script>
     <script>
+        // Preloader Logic
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            preloader.style.opacity = '0';
+            setTimeout(() => preloader.style.display = 'none', 800);
+        });
+
+        // Simple Background "Slide" Effect
+        const heroBg = document.getElementById('hero');
+        const images = [
+            'hero-bg.png',
+            'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=1200',
+            'https://images.unsplash.com/photo-1585338107529-13afc5f02586?auto=format&fit=crop&q=80&w=1200'
+        ];
+        let currentImg = 0;
+
+        function cycleBg() {
+            currentImg = (currentImg + 1) % images.length;
+            heroBg.style.backgroundImage = `linear-gradient(rgba(10, 10, 15, 0.7), rgba(10, 10, 15, 0.4)), url('${images[currentImg]}')`;
+        }
+        setInterval(cycleBg, 8000); // Cycle every 8 seconds
+
         // Mobile Menu Toggle
         const menuBtn = document.getElementById('menuBtn');
         const navMenu = document.getElementById('navMenu');
+
+        // Copy Protection (No Copy/Selection)
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('selectstart', e => e.preventDefault());
+        document.addEventListener('touchstart', e => {
+            if (e.touches.length > 1) e.preventDefault(); // Disable multi-touch zoom if needed
+        }, {passive: false});
+
 
         menuBtn.addEventListener('click', () => {
             navMenu.classList.toggle('active');

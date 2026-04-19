@@ -9,42 +9,12 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <script src="firebase-init.js"></script>
-
     <style>
-        .heritage-section {
-            display: flex;
-            align-items: center;
-            gap: 100px;
-            margin-bottom: 150px;
-        }
-        .heritage-image {
-            flex: 1;
-            height: 650px;
-            background: url('https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?auto=format&fit=crop&q=80&w=800') center/cover;
-            border: 1px solid var(--accent-gold);
-            padding: 10px;
-            position: relative;
-        }
-        .heritage-image::after {
-            content: '';
-            position: absolute;
-            top: -15px; right: -15px;
-            width: 100%; height: 100%;
-            border: 1px solid var(--accent-gold);
-            z-index: -1;
-        }
-        .heritage-content {
-            flex: 1;
-        }
         .gold-divider {
-            width: 60px;
+            width: 80px;
             height: 1px;
             background: var(--accent-gold);
-            margin: 40px 0;
+            margin: 40px auto;
         }
         .quote {
             font-size: 2.22rem;
@@ -55,38 +25,44 @@
             line-height: 1.3;
         }
 
-        /* Profile DP styling for Mobile */
-        .profile-dp-container {
-            display: none;
-            width: 180px;
-            height: 180px;
-            margin: 0 auto 30px;
-            border-radius: 50%;
-            border: 3px solid var(--accent-gold);
-            padding: 8px;
-            background: var(--bg-dark);
-            box-shadow: 0 0 30px var(--gold-glow);
+        .heritage-card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 100px;
         }
-        .profile-dp {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
+
+        .heritage-card {
+            background: rgba(30, 30, 46, 0.4);
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            text-align: center;
+            transition: var(--transition-fast);
+        }
+
+        .heritage-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-10px);
+        }
+
+        .heritage-card i {
+            font-size: 2.5rem;
+            color: var(--accent-gold);
+            margin-bottom: 20px;
         }
 
         @media (max-width: 768px) {
-            .heritage-section { flex-direction: column; gap: 60px; text-align: center; }
-            .heritage-image { display: none; } /* Hide the big strip on mobile */
-            .profile-dp-container { display: block; } /* Show DP on mobile */
-            .heritage-content h1 { font-size: 3rem !important; }
             .quote { font-size: 1.6rem; }
-            .gold-divider { margin: 30px auto; }
+            .story-dp-container {
+                width: 150px !important;
+                height: 150px !important;
+            }
         }
-
     </style>
 </head>
 
 <body>
+    <!-- Header -->
     <header>
         <a href="index.html" class="logo">CADET <span>STATIONERY</span></a>
         <ul class="nav-menu" id="navMenu">
@@ -99,67 +75,68 @@
         </div>
     </header>
 
-    <section class="section-container" style="margin-top: 150px;">
-        <div class="heritage-section">
-            <div class="heritage-content">
-                <!-- Mobile DP -->
-                <div class="profile-dp-container">
-                    <img id="dynDp" class="profile-dp" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200" alt="DP">
-                </div>
-
-                <p style="text-transform: uppercase; letter-spacing: 6px; color: var(--accent-gold); margin-bottom: 25px; font-size: 0.8rem;">EST. 2026</p>
-                <h1 id="dynTitle" style="font-size: 4.5rem; line-height: 1.1; color: var(--text-white);">The Art of <br>Fine Writing</h1>
-                <div class="gold-divider"></div>
-                <p id="dynText" style="font-weight: 300; font-size: 1.15rem; color: var(--text-champagne); line-height: 1.9; opacity: 0.9;">
-                    <!-- Dynamic Content -->
-                </p>
-                <p id="dynQuote" class="quote">"A pen is more than a tool; it is an extension of the soul."</p>
+    <!-- History/Story Hero -->
+    <section class="hero" id="storyHero" style="height: 100vh; position: relative; overflow: hidden; margin-top: 0; background-attachment: fixed; background-image: url('https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=1600');">
+        <div class="hero-overlay" style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to bottom, rgba(10, 10, 15, 0.7), #0a0a0f);"></div>
+        
+        <div class="hero-content" style="z-index: 2; text-align: center; max-width: 900px; padding: 0 5%;">
+            <!-- Profile DP (Square/Choras) -->
+            <div class="story-dp-container" style="width: 200px; height: 200px; margin: 0 auto 40px; border: 2px solid var(--accent-gold); padding: 5px; background: rgba(10, 10, 15, 0.5); backdrop-filter: blur(10px); animation: fadeInUp 0.8s ease forwards;">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400" alt="DP" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
-            <div id="dynImg" class="heritage-image"></div>
+
+            <p style="text-transform: uppercase; letter-spacing: 8px; color: var(--accent-gold); margin-bottom: 20px; font-size: 0.8rem; animation: fadeInUp 1s ease forwards;">EST. 2026</p>
+            <h1 style="line-height: 1.1; color: var(--text-white); margin-bottom: 30px; animation: fadeInUp 1.2s ease forwards;">The Legacy of <br>Fine Writing</h1>
+            <div class="gold-divider" style="animation: fadeInUp 1.4s ease forwards;"></div>
         </div>
-
-
     </section>
 
+    <!-- Content Section -->
+    <section class="section-container" style="background: #0a0a0f; padding-top: 100px;">
+        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
+            <p style="font-weight: 300; font-size: 1.3rem; color: var(--text-champagne); line-height: 2.2; opacity: 0.9; animation: fadeInUp 1.6s ease forwards;">
+                At Cadet Stationery, we believe that the tools you use define the legacy you leave. What began as a passion for the tactile beauty of ink on paper has evolved into a sanctuary for the world's finest writing instruments and handcrafted journals. 
+                <br><br>
+                Our collection is curated for those who understand that in a digital age, the stroke of a pen remains the most personal form of expression. Every item in our inventory is selected for its craftsmanship, durability, and timeless aesthetic.
+            </p>
+            
+            <p class="quote" style="animation: fadeInUp 1.8s ease forwards;">"A pen is more than a tool; it is an extension of the soul."</p>
+
+            <!-- Heritage Cards (New) -->
+            <div class="heritage-card-grid">
+                <div class="heritage-card">
+                    <i class="fas fa-feather-pointed"></i>
+                    <h3>Artisan Quality</h3>
+                    <p style="color: var(--text-champagne); font-size: 0.9rem; margin-top: 15px;">Every product is hand-checked for perfection before it reaches your desk.</p>
+                </div>
+                <div class="heritage-card">
+                    <i class="fas fa-crown"></i>
+                    <h3>Executive Style</h3>
+                    <p style="color: var(--text-champagne); font-size: 0.9rem; margin-top: 15px;">Designs tailored for the modern professional who values elegance.</p>
+                </div>
+                <div class="heritage-card">
+                    <i class="fas fa-history"></i>
+                    <h3>Timeless Value</h3>
+                    <p style="color: var(--text-champagne); font-size: 0.9rem; margin-top: 15px;">Supplies that don't just work well, but build a legacy over time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer>
         <p>&copy; 2026 Cadet Stationery Store. Crafted for excellence. <br><span style="color: var(--accent-gold); font-size: 0.8rem; letter-spacing: 2px;">DEVELOPER MUDASIR</span></p>
     </footer>
 
-
     <script>
-        // Load Dynamic CMS Data
-        function renderCms(data) {
-            if (data.storyTitle) document.getElementById('dynTitle').innerText = data.storyTitle;
-            if (data.storyText) document.getElementById('dynText').innerText = data.storyText;
-            if (data.storyQuote) document.getElementById('dynQuote').innerText = `"${data.storyQuote}"`;
-            if (data.storyImg) document.getElementById('dynImg').style.backgroundImage = `url('${data.storyImg}')`;
-            if (data.dpImg) document.getElementById('dynDp').src = data.dpImg;
-        }
-
-        // Load Dynamic CMS Data from LocalStorage first
-        let cmsData = JSON.parse(localStorage.getItem('cadet_cms'));
-        if (cmsData) renderCms(cmsData);
-
-        // Fetch from Firebase if configured
-        if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
-            firebase.database().ref('cms').on('value', snapshot => {
-                if (snapshot.exists()) {
-                    cmsData = snapshot.val();
-                    localStorage.setItem('cadet_cms', JSON.stringify(cmsData));
-                    renderCms(cmsData);
-                }
-            });
-        }
-
-
-
-        function containsUrdu(text) {
-            const urduPattern = /[\u0600-\u06FF]/;
-            return urduPattern.test(text);
-        }
-
+        // Mobile Menu Logic
         const menuBtn = document.getElementById('menuBtn');
         const navMenu = document.getElementById('navMenu');
+
+        // Copy Protection
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('selectstart', e => e.preventDefault());
+        document.addEventListener('touchstart', e => { if (e.touches.length > 1) e.preventDefault(); }, {passive: false});
 
         if (menuBtn && navMenu) {
             menuBtn.addEventListener('click', () => {

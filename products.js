@@ -126,14 +126,17 @@ function renderProducts() {
     const grid = document.getElementById('productGrid');
     if (!grid) return; 
 
-    grid.innerHTML = '';
     const filtered = stationeryInventory.filter(p => currentCategory === 'all' || p.category === currentCategory);
-
-    filtered.forEach(p => {
-        grid.innerHTML += `
-            <div class="product-card" style="animation: fadeInUp 0.8s ease-out forwards;">
+    
+    // Smooth loading: clear and rebuild with template string (much faster)
+    let htmlContent = '';
+    filtered.forEach((p, index) => {
+        // Staggered delay for smooth flow
+        const delay = (index % 12) * 0.05; 
+        htmlContent += `
+            <div class="product-card" style="animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) ${delay}s forwards; opacity: 0;">
                 <div class="product-img-container">
-                    <img src="${p.img}" alt="${p.name}" class="product-img">
+                    <img src="${p.img}" alt="${p.name}" class="product-img" loading="lazy">
                 </div>
                 <h3 class="product-name">${p.name}</h3>
                 <p class="product-price">${p.price}</p>
@@ -141,6 +144,8 @@ function renderProducts() {
             </div>
         `;
     });
+    
+    grid.innerHTML = htmlContent;
 }
 
 function filterCategory(cat) {
