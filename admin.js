@@ -5,6 +5,14 @@ const ADMIN_CREDENTIALS = {
 
 let products = JSON.parse(localStorage.getItem('cadet_inventory')) || [];
 let currentBase64 = "";
+let currentCmsBase64 = "";
+let currentDpBase64 = "";
+
+// Initialize CMS data if not exists
+let cmsData = JSON.parse(localStorage.getItem('cadet_cms')) || {
+    storyImg: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=1600",
+    dpImg: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400"
+};
 
 // Helper to compress images to ensure they fit in LocalStorage
 function compressImage(file, maxWidth, maxHeight, quality, callback) {
@@ -79,6 +87,19 @@ function showDashboard() {
         });
     }
     renderAdminProducts();
+    loadCmsFields();
+
+    // CMS Sync from Firebase
+    if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+        firebase.database().ref('cms').once('value', snapshot => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                localStorage.setItem('cadet_cms', JSON.stringify(data));
+                cmsData = data;
+                loadCmsFields();
+            }
+        });
+    }
 }
 
 
@@ -118,6 +139,28 @@ function previewImage(input) {
             document.getElementById('imgPreview').style.display = 'block';
             document.getElementById('previewTag').src = currentBase64;
             document.getElementById('p_img').value = "Product Image Optimized"; 
+        });
+    }
+}
+
+function previewCmsImage(input) {
+    if (input.files && input.files[0]) {
+        compressImage(input.files[0], 1600, 1600, 0.7, (base64) => {
+            currentCmsBase64 = base64;
+            document.getElementById('cmsImgPreview').style.display = 'block';
+            document.getElementById('cmsPreviewTag').src = currentCmsBase64;
+            document.getElementById('cms_story_img').value = "Header Image Optimized";
+        });
+    }
+}
+
+function previewDpImage(input) {
+    if (input.files && input.files[0]) {
+        compressImage(input.files[0], 600, 600, 0.8, (base64) => {
+            currentDpBase64 = base64;
+            document.getElementById('cmsDpPreview').style.display = 'block';
+            document.getElementById('dpPreviewTag').src = currentDpBase64;
+            document.getElementById('cms_dp_img').value = "DP Selected & Optimized"; 
         });
     }
 }
@@ -213,5 +256,53 @@ function resetInventory() {
     if(confirm('Reset all inventory to default?')) {
         localStorage.removeItem('cadet_inventory');
         location.reload();
+    }
+}
+
+// --- CMS Settings Logic ---
+
+function loadCmsFields() {
+    if (!document.getElementById('cms_story_img')) return;
+    
+    document.getElementById('cms_story_img').value = cmsData.storyImg;
+    document.getElementById('cms_dp_img').value = cmsData.dpImg || "";
+
+    if (cmsData.storyImg) {
+        document.getElementById('cmsImgPreview').style.display = 'block';
+        document.getElementById('cmsPreviewTag').src = cmsData.storyImg;
+        if (cmsData.storyImg.length > 200) document.getElementById('cms_story_img').value = "Header Image Optimized";
+    }
+    if (cmsData.dpImg) {
+        document.getElementById('cmsDpPreview').style.display = 'block';
+        document.getElementById('dpPreviewTag').src = cmsData.dpImg;
+        if (cmsData.dpImg.length > 200) document.getElementById('cms_dp_img').value = "DP Selected & Optimized";
+    }
+}
+
+function saveCmsData() {
+    if (currentCmsBase64) cmsData.storyImg = currentCmsBase64;
+    else {
+        const val = document.getElementById('cms_story_img').value;
+        if (val && !val.includes("Optimized")) cmsData.storyImg = val;
+    }
+
+    if (currentDpBase64) cmsData.dpImg = currentDpBase64;
+    else {
+        const val = document.getElementById('cms_dp_img').value;
+        if (val && !val.includes("Optimized")) cmsData.dpImg = val;
+    }
+
+    try {
+        localStorage.setItem('cadet_cms', JSON.stringify(cmsData));
+        if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+            firebase.database().ref('cms').set(cmsData)
+                .then(() => alert('Visuals updated globally!'))
+                .catch(() => alert('Error syncing to cloud.'));
+        } else alert('Local visuals updated!');
+        
+        currentCmsBase64 = "";
+        currentDpBase64 = "";
+    } catch(e) {
+        alert("Storage Full! Use smaller images.");
     }
 }

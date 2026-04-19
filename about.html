@@ -82,7 +82,7 @@
         <div class="hero-content" style="z-index: 2; text-align: center; max-width: 900px; padding: 0 5%;">
             <!-- Profile DP (Square/Choras) -->
             <div class="story-dp-container" style="width: 200px; height: 200px; margin: 0 auto 40px; border: 2px solid var(--accent-gold); padding: 5px; background: rgba(10, 10, 15, 0.5); backdrop-filter: blur(10px); animation: fadeInUp 0.8s ease forwards;">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400" alt="DP" style="width: 100%; height: 100%; object-fit: cover;">
+                <img id="dynDp" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400" alt="DP" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
 
             <p style="text-transform: uppercase; letter-spacing: 8px; color: var(--accent-gold); margin-bottom: 20px; font-size: 0.8rem; animation: fadeInUp 1s ease forwards;">EST. 2026</p>
@@ -102,7 +102,7 @@
             
             <p class="quote" style="animation: fadeInUp 1.8s ease forwards;">"A pen is more than a tool; it is an extension of the soul."</p>
 
-            <!-- Heritage Cards (New) -->
+            <!-- Heritage Cards -->
             <div class="heritage-card-grid">
                 <div class="heritage-card">
                     <i class="fas fa-feather-pointed"></i>
@@ -123,12 +123,26 @@
         </div>
     </section>
 
-    <!-- Footer -->
     <footer>
         <p>&copy; 2026 Cadet Stationery Store. Crafted for excellence. <br><span style="color: var(--accent-gold); font-size: 0.8rem; letter-spacing: 2px;">DEVELOPER MUDASIR</span></p>
     </footer>
 
     <script>
+        // CMS Initialization
+        const localData = JSON.parse(localStorage.getItem('cadet_cms'));
+        if (localData) applyCms(localData);
+
+        if (typeof firebase !== 'undefined') {
+            firebase.database().ref('cms').on('value', snapshot => {
+                if (snapshot.exists()) applyCms(snapshot.val());
+            });
+        }
+
+        function applyCms(data) {
+            if (data.storyImg) document.getElementById('storyHero').style.backgroundImage = `url('${data.storyImg}')`;
+            if (data.dpImg) document.getElementById('dynDp').src = data.dpImg;
+        }
+
         // Mobile Menu Logic
         const menuBtn = document.getElementById('menuBtn');
         const navMenu = document.getElementById('navMenu');
