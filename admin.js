@@ -115,7 +115,13 @@ function renderAdminProducts() {
     root.innerHTML = '';
     products = JSON.parse(localStorage.getItem('cadet_inventory')) || [];
 
+    let totalValue = 0;
+
     products.forEach((p, index) => {
+        // Calculate total value: parse price string (e.g. "Rs. 5,000" -> 5000)
+        const numericPrice = parseFloat(p.price.replace(/[^0-9.]/g, '')) || 0;
+        totalValue += numericPrice;
+
         root.innerHTML += `
             <tr>
                 <td><img src="${p.img}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
@@ -127,7 +133,15 @@ function renderAdminProducts() {
             </tr>
         `;
     });
+
     document.getElementById('totalProducts').innerText = products.length;
+    
+    // Format total value (e.g. 150000 -> Rs. 150k or formatted number)
+    if (totalValue >= 1000) {
+        document.getElementById('portfolioValue').innerText = "Rs. " + (totalValue / 1000).toFixed(1) + "k";
+    } else {
+        document.getElementById('portfolioValue').innerText = "Rs. " + totalValue;
+    }
 }
 
 // --- Image Handling ---
