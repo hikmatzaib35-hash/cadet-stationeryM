@@ -95,8 +95,20 @@ const DEFAULT_INVENTORY = [
     { id: 85, category: "gifts", name: "Crystal Prism Weight", price: "Rs. 4,500", img: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&q=80&w=400" }
 ];
 
+const DEFAULT_CATEGORIES = [
+    { id: 'writing', name: 'Instruments' },
+    { id: 'paper', name: 'Paper & Journals' },
+    { id: 'tools', name: 'Desk Tools' },
+    { id: 'gifts', name: 'Artisan Gifts' },
+    { id: 'office', name: 'Office Essentials' },
+    { id: 'luxury', name: 'Luxury Suite' },
+    { id: 'art', name: 'Artistic Canvas' },
+    { id: 'cards', name: 'Greets & Cards' }
+];
+
 // Data persistence logic
 let stationeryInventory = JSON.parse(localStorage.getItem('cadet_inventory'));
+let stationeryCategories = JSON.parse(localStorage.getItem('cadet_categories')) || DEFAULT_CATEGORIES;
 
 // FORCE REFRESH TO 85+ ON FIRST LOAD OR IF TOLD
 if (!stationeryInventory || stationeryInventory.length < 80) {
@@ -104,8 +116,14 @@ if (!stationeryInventory || stationeryInventory.length < 80) {
     localStorage.setItem('cadet_inventory', JSON.stringify(stationeryInventory));
 }
 
+// Ensure categories are saved
+if (!localStorage.getItem('cadet_categories')) {
+    localStorage.setItem('cadet_categories', JSON.stringify(stationeryCategories));
+}
+
 function saveToStorage() {
     localStorage.setItem('cadet_inventory', JSON.stringify(stationeryInventory));
+    localStorage.setItem('cadet_categories', JSON.stringify(stationeryCategories));
 }
 
 // Fetch from Firebase if configured
@@ -117,10 +135,32 @@ if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
             renderProducts();
         }
     });
+
+    firebase.database().ref('categories').on('value', snapshot => {
+        if (snapshot.exists()) {
+            stationeryCategories = snapshot.val();
+            localStorage.setItem('cadet_categories', JSON.stringify(stationeryCategories));
+            renderCategories();
+            renderProducts();
+        }
+    });
 }
 
 
 let currentCategory = 'all';
+
+function renderCategories() {
+    const bar = document.getElementById('filterBarRoot');
+    if (!bar) return;
+
+    let html = `<button class="filter-tab ${currentCategory === 'all' ? 'active' : ''}" onclick="filterCategory('all')">All Collections</button>`;
+    
+    stationeryCategories.forEach(cat => {
+        html += `<button class="filter-tab ${currentCategory === cat.id ? 'active' : ''}" onclick="filterCategory('${cat.id}')">${cat.name}</button>`;
+    });
+
+    bar.innerHTML = html;
+}
 
 function renderProducts() {
     const grid = document.getElementById('productGrid');
@@ -150,15 +190,7 @@ function renderProducts() {
 
 function filterCategory(cat) {
     currentCategory = cat;
-    
-    document.querySelectorAll('.filter-tab').forEach(tab => {
-        tab.classList.remove('active');
-        const tabFunc = tab.getAttribute('onclick');
-        if (tabFunc && tabFunc.includes(`'${cat}'`)) {
-            tab.classList.add('active');
-        }
-    });
-
+    renderCategories();
     renderProducts();
 }
 
@@ -169,4 +201,7 @@ function orderWhatsApp(productName) {
     window.open(url, '_blank');
 }
 
-document.addEventListener('DOMContentLoaded', renderProducts);
+document.addEventListener('DOMContentLoaded', () => {
+    renderCategories();
+    renderProducts();
+});

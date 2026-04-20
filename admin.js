@@ -4,6 +4,16 @@ const ADMIN_CREDENTIALS = {
 };
 
 let products = JSON.parse(localStorage.getItem('cadet_inventory')) || [];
+let categories = JSON.parse(localStorage.getItem('cadet_categories')) || [
+    { id: 'writing', name: 'Instruments' },
+    { id: 'paper', name: 'Paper & Journals' },
+    { id: 'tools', name: 'Desk Tools' },
+    { id: 'gifts', name: 'Artisan Gifts' },
+    { id: 'office', name: 'Office Essentials' },
+    { id: 'luxury', name: 'Luxury Suite' },
+    { id: 'art', name: 'Artistic Canvas' },
+    { id: 'cards', name: 'Greets & Cards' }
+];
 let currentBase64 = "";
 
 // Helper to compress images to ensure they fit in LocalStorage
@@ -77,14 +87,82 @@ function showDashboard() {
                 renderAdminProducts();
             }
         });
+
+        firebase.database().ref('categories').once('value', snapshot => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                localStorage.setItem('cadet_categories', JSON.stringify(data));
+                categories = data;
+                renderAdminCategories();
+            }
+        });
     }
     renderAdminProducts();
+    renderAdminCategories();
 }
 
 
 function adminLogout() {
     localStorage.removeItem('cadet_admin_auth');
     location.reload();
+}
+
+function renderAdminCategories() {
+    const root = document.getElementById('adminCategoryRoot');
+    const select = document.getElementById('p_cat');
+    if (!root) return;
+
+    root.innerHTML = '';
+    categories = JSON.parse(localStorage.getItem('cadet_categories')) || categories;
+
+    let selectHtml = '';
+    categories.forEach((c, index) => {
+        root.innerHTML += `
+            <tr>
+                <td>${c.id}</td>
+                <td>${c.name}</td>
+                <td>
+                    <button class="action-btn" onclick="deleteCategory(${index})" style="color: #ff4d4d;">X</button>
+                </td>
+            </tr>
+        `;
+        selectHtml += `<option value="${c.id}">${c.name}</option>`;
+    });
+
+    if (select) select.innerHTML = selectHtml;
+}
+
+function showCategoryForm() { document.getElementById('categoryForm').classList.remove('hidden'); }
+function hideCategoryForm() { document.getElementById('categoryForm').classList.add('hidden'); }
+
+function saveCategory() {
+    const id = document.getElementById('c_id').value.trim().toLowerCase().replace(/\s+/g, '-');
+    const name = document.getElementById('c_name').value.trim();
+
+    if (!id || !name) return alert("Fill all fields!");
+
+    categories.push({ id, name });
+    localStorage.setItem('cadet_categories', JSON.stringify(categories));
+    
+    if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+        firebase.database().ref('categories').set(categories);
+    }
+
+    renderAdminCategories();
+    hideCategoryForm();
+    document.getElementById('c_id').value = "";
+    document.getElementById('c_name').value = "";
+}
+
+function deleteCategory(index) {
+    if (confirm('Delete this collection?')) {
+        categories.splice(index, 1);
+        localStorage.setItem('cadet_categories', JSON.stringify(categories));
+        if (typeof firebase !== 'undefined' && firebase.apps.length > 0) {
+            firebase.database().ref('categories').set(categories);
+        }
+        renderAdminCategories();
+    }
 }
 
 function renderAdminProducts() {
