@@ -99,19 +99,8 @@
 
         // Simple Background "Slide" Effect
         const heroBg = document.getElementById('hero');
-        const images = [
-            'hero-bg.png',
-            'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80&w=1200',
-            'https://images.unsplash.com/photo-1585338107529-13afc5f02586?auto=format&fit=crop&q=80&w=1200'
-        ];
-        let currentImg = 0;
-
-        function cycleBg() {
-            currentImg = (currentImg + 1) % images.length;
-            heroBg.style.backgroundImage = `linear-gradient(rgba(10, 10, 15, 0.7), rgba(10, 10, 15, 0.4)), url('${images[currentImg]}')`;
-        }
-        setInterval(cycleBg, 8000); // Cycle every 8 seconds
-
+        // Back to original static background if needed, but the CSS handles hero-bg.png
+        
         // Mobile Menu Toggle
         const menuBtn = document.getElementById('menuBtn');
         const navMenu = document.getElementById('navMenu');

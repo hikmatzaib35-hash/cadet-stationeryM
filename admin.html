@@ -192,33 +192,6 @@
                 </tbody>
             </table>
         </div>
-
-        <!-- Website Visuals Editor (NEW) -->
-        <div class="product-manager" style="width: 100%; border-top: 2px solid var(--accent-gold); margin-top: 40px;">
-                <h3 style="margin-bottom: 30px;">Website Visuals (Story Page)</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
-                    <!-- DP Editor -->
-                    <div class="stat-card" style="text-align: left; background: rgba(255,255,255,0.03);">
-                        <h4 style="margin-bottom: 20px;">Profile DP (Square)</h4>
-                        <input type="file" id="cms_dp_file" accept="image/*" onchange="previewDpImage(this)" style="margin-bottom: 15px; width: 100%;">
-                        <input type="text" id="cms_dp_img" placeholder="Or Image URL" style="width: 100%; background: transparent; border: 1px solid var(--glass-border); color: white; padding: 10px; margin-bottom: 15px;">
-                        <div id="cmsDpPreview" style="display: none; text-align: center;">
-                            <img id="dpPreviewTag" src="" style="width: 120px; height: 120px; object-fit: cover; border: 1px solid var(--accent-gold);">
-                        </div>
-                    </div>
-
-                    <!-- Header Editor -->
-                    <div class="stat-card" style="text-align: left; background: rgba(255,255,255,0.03);">
-                        <h4 style="margin-bottom: 20px;">Story Hero Background</h4>
-                        <input type="file" id="cms_story_file" accept="image/*" onchange="previewCmsImage(this)" style="margin-bottom: 15px; width: 100%;">
-                        <input type="text" id="cms_story_img" placeholder="Or Image URL" style="width: 100%; background: transparent; border: 1px solid var(--glass-border); color: white; padding: 10px; margin-bottom: 15px;">
-                        <div id="cmsImgPreview" style="display: none; text-align: center;">
-                            <img id="cmsPreviewTag" src="" style="width: 100%; height: 80px; object-fit: cover; border: 1px solid var(--accent-gold);">
-                        </div>
-                    </div>
-                </div>
-                <button class="btn-premium" style="width: 100%; margin-top: 30px;" onclick="saveCmsData()">Update Website Visuals</button>
-            </div>
     </div>
 
     <script src="admin.js"></script>

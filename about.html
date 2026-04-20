@@ -80,11 +80,6 @@
         <div class="hero-overlay" style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(to bottom, rgba(10, 10, 15, 0.7), #0a0a0f);"></div>
         
         <div class="hero-content" style="z-index: 2; text-align: center; max-width: 900px; padding: 0 5%;">
-            <!-- Profile DP (Square/Choras) -->
-            <div class="story-dp-container" style="width: 200px; height: 200px; margin: 0 auto 40px; border: 2px solid var(--accent-gold); padding: 5px; background: rgba(10, 10, 15, 0.5); backdrop-filter: blur(10px); animation: fadeInUp 0.8s ease forwards;">
-                <img id="dynDp" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400" alt="DP" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-
             <p style="text-transform: uppercase; letter-spacing: 8px; color: var(--accent-gold); margin-bottom: 20px; font-size: 0.8rem; animation: fadeInUp 1s ease forwards;">EST. 2026</p>
             <h1 style="line-height: 1.1; color: var(--text-white); margin-bottom: 30px; animation: fadeInUp 1.2s ease forwards;">The Legacy of <br>Fine Writing</h1>
             <div class="gold-divider" style="animation: fadeInUp 1.4s ease forwards;"></div>
@@ -128,21 +123,6 @@
     </footer>
 
     <script>
-        // CMS Initialization
-        const localData = JSON.parse(localStorage.getItem('cadet_cms'));
-        if (localData) applyCms(localData);
-
-        if (typeof firebase !== 'undefined') {
-            firebase.database().ref('cms').on('value', snapshot => {
-                if (snapshot.exists()) applyCms(snapshot.val());
-            });
-        }
-
-        function applyCms(data) {
-            if (data.storyImg) document.getElementById('storyHero').style.backgroundImage = `url('${data.storyImg}')`;
-            if (data.dpImg) document.getElementById('dynDp').src = data.dpImg;
-        }
-
         // Mobile Menu Logic
         const menuBtn = document.getElementById('menuBtn');
         const navMenu = document.getElementById('navMenu');
