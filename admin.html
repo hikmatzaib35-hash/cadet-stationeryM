@@ -174,28 +174,25 @@
             </div>
             
             <div id="categoryForm" class="hidden" style="background: rgba(255,255,255,0.05); padding: 20px; margin-bottom: 20px;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="input-group">
-                        <label>Collection ID (e.g. office)</label>
-                        <input type="text" id="c_id" placeholder="No spaces">
-                    </div>
+                <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
                     <div class="input-group">
                         <label>Collection Name (e.g. Office Tools)</label>
-                        <input type="text" id="c_name" placeholder="Display name">
+                        <input type="text" id="c_name" placeholder="Enter collection name here">
                     </div>
+                    <!-- Hidden ID field, auto-generated from name -->
+                    <input type="hidden" id="c_id">
                 </div>
                 <div style="margin-top: 20px;">
-                    <button class="action-btn" onclick="saveCategory()">Save Collection</button>
-                    <button class="action-btn" onclick="hideCategoryForm()">Cancel</button>
+                    <button class="btn-premium" onclick="saveCategory()" style="padding: 10px 30px;">Save Collection</button>
+                    <button class="action-btn" onclick="hideCategoryForm()" style="margin-left: 10px;">Cancel</button>
                 </div>
             </div>
 
             <table class="product-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Actions</th>
+                        <th>Collection Name</th>
+                        <th style="text-align: right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="adminCategoryRoot">
