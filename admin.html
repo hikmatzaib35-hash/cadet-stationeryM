@@ -435,11 +435,11 @@
             width: var(--sidebar-width);
             background: var(--sidebar-bg);
             border-right: 1px solid var(--glass-border);
-            backdrop-filter: blur(30px);
+            backdrop-filter: blur(20px);
             z-index: 100;
             display: flex;
             flex-direction: column;
-            transition: var(--transition);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             overflow: hidden;
         }
 
@@ -1097,41 +1097,112 @@
             font-size: 0.85rem;
         }
 
-        /* ─── RESPONSIVE ─── */
-        @media (max-width: 1200px) {
-            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        /* ─── SIDEBAR CLOSE BTN (Mobile) ─── */
+        .sidebar-close-btn {
+            display: none;
+            position: absolute;
+            top: 20px;
+            right: 16px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+            z-index: 10;
         }
+        .sidebar-close-btn:hover { color: var(--red); border-color: var(--red); }
 
-        @media (max-width: 900px) {
-            :root { --sidebar-width: 0px; }
-            .sidebar { transform: translateX(-280px); width: 280px; }
-            .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0; }
-            .topbar { padding: 0 20px; }
-            .content-area { padding: 24px 20px; }
-            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-            .hamburger { display: flex !important; }
+        /* ─── SIDEBAR OVERLAY ─── */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            backdrop-filter: blur(4px);
+            z-index: 99;
         }
+        .sidebar-overlay.show { display: block; }
 
-        @media (max-width: 600px) {
-            .stats-grid { grid-template-columns: 1fr; }
-            .form-grid { grid-template-columns: 1fr; }
-        }
-
+        /* ─── HAMBURGER ─── */
         .hamburger {
             display: none;
             flex-direction: column;
             gap: 5px;
             cursor: pointer;
             padding: 8px;
+            margin-right: 10px;
         }
-
         .hamburger span {
             display: block;
             width: 22px;
             height: 2px;
             background: var(--champagne);
             transition: var(--transition);
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 1200px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 900px) {
+            /* Sidebar hidden by default on mobile */
+            .sidebar {
+                transform: translateX(-290px);
+                width: 280px;
+                backdrop-filter: none; /* perf boost */
+                background: rgba(8, 8, 18, 0.99);
+            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-close-btn { display: flex; }
+            .main-content { margin-left: 0; }
+            .topbar { padding: 0 16px; }
+            .topbar-badge { display: none; } /* hide on mobile */
+            .content-area { padding: 20px 14px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .hamburger { display: flex; }
+            /* Section header stack on mobile */
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .section-header > div {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            /* Search full width */
+            .search-bar { max-width: 100%; flex: 1 1 100%; }
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat-card { padding: 18px 14px; }
+            .stat-value { font-size: 1.6rem; }
+            .stat-icon { width: 38px; height: 38px; font-size: 1rem; margin-bottom: 10px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column; }
+            .form-actions .btn { width: 100%; justify-content: center; }
+            .form-overlay { padding: 20px 16px; }
+            /* Table: hide Category & Price columns on very small screens */
+            .data-table .col-cat,
+            .data-table .col-price { display: none; }
+            .data-table th:nth-child(3),
+            .data-table td:nth-child(3),
+            .data-table th:nth-child(4),
+            .data-table td:nth-child(4) { display: none; }
+            .data-table td, .data-table th { padding: 10px 8px; }
+            .content-area { padding: 16px 10px; }
+            .topbar-left h2 { font-size: 1.1rem; }
+            .topbar-left .breadcrumb { font-size: 0.65rem; }
+            #toast { right: 10px; bottom: 16px; min-width: 220px; font-size: 0.8rem; }
+            .modal-box { padding: 28px 20px; margin: 0 16px; }
         }
     </style>
 </head>
@@ -1231,10 +1302,17 @@
 </div>
 
 <!-- ═══════════════ ADMIN APP ═══════════════ -->
+<!-- Sidebar Overlay (mobile close) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
 <div id="adminApp">
 
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
+        <!-- Mobile Close Button -->
+        <button class="sidebar-close-btn" onclick="closeSidebar()" title="Close menu">
+            <i class="fas fa-xmark"></i>
+        </button>
         <div class="sidebar-logo">
             <span class="brand">CADET <span>EXECUTIVE</span></span>
             <span class="brand-sub">Admin Command Center</span>
@@ -1559,25 +1637,25 @@
         }
     }
 
-    const particles = Array.from({ length: 120 }, () => new Particle());
+    const particles = Array.from({ length: 60 }, () => new Particle());
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         particles.forEach(p => { p.update(); p.draw(); });
 
-        // Draw connecting lines between close particles (gold web)
+        // Draw connecting lines between close particles (lighter, less CPU)
         for (let i = 0; i < particles.length; i++) {
             for (let j = i + 1; j < particles.length; j++) {
                 const dx = particles[i].x - particles[j].x;
                 const dy = particles[i].y - particles[j].y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 90) {
-                    const alpha = (1 - dist / 90) * 0.15;
+                if (dist < 80) {
+                    const alpha = (1 - dist / 80) * 0.12;
                     ctx.beginPath();
                     ctx.moveTo(particles[i].x, particles[i].y);
                     ctx.lineTo(particles[j].x, particles[j].y);
                     ctx.strokeStyle = GOLD + alpha + ')';
-                    ctx.lineWidth = 0.5;
+                    ctx.lineWidth = 0.4;
                     ctx.stroke();
                 }
             }

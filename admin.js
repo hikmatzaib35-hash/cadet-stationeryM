@@ -158,10 +158,31 @@ function switchPanel(panelId, navEl) {
 
     document.getElementById('panelTitle').textContent = titles[panelId][0];
     document.getElementById('panelBreadcrumb').textContent = titles[panelId][1];
+
+    // Auto-close sidebar on mobile after navigation
+    if (window.innerWidth <= 900) {
+        closeSidebar();
+    }
 }
 
 function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('open');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    if (sidebar.classList.contains('open')) {
+        closeSidebar();
+    } else {
+        sidebar.classList.add('open');
+        if (overlay) overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    sidebar.classList.remove('open');
+    if (overlay) overlay.classList.remove('show');
+    document.body.style.overflow = '';
 }
 
 /* ──────────────────────────────────────
